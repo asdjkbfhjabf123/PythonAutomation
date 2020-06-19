@@ -1,0 +1,86 @@
+Selective Copy:
+Write a program that walks through a folder tree and searches for files with a certain file extension (such as .pdf or .jpg). Copy these files from whatever location they are in to a new folder.
+Ans>
+import os
+
+pathInput = os.path.abspath(input('Enter the path for the directory to search '))
+
+for folder, subFolders, files in os.walk(pathInput):
+    for file in files:
+        file = os.path.join(folder, file)
+        if int(os.path.getsize(file)) > 100000000:
+            print('File located, Name: {fileName}, Location: {path}'.format(fileName=file, path=folder))
+
+
+Deleting Unneeded Files:
+It’s not uncommon for a few unneeded but humongous files or folders to take up the bulk of the space on your hard drive. If you’re trying to free up room on your computer, you’ll get the most bang for your buck by deleting the most massive of the unwanted files. But first you have to find them.
+Write a program that walks through a folder tree and searches for exceptionally large files or folders—say, ones that have a file size of more than 100MB. (Remember, to get a file’s size, you can use os.path.getsize() from the os module.) Print these files with their absolute path to the screen
+Ans>
+import os
+
+pathInput = os.path.abspath(input('Enter the path for the directory to search '))
+
+for folder, subFolders, files in os.walk(pathInput):
+    for file in files:
+        file = os.path.join(folder, file)
+        try:
+            if int(os.path.getsize(file)) > 100000000:
+                print('File {fileName} located at {path}'.format(fileName=file, path=folder))
+        except FileNotFoundError:
+            print('FileNotFoundError: {}'.format(file))
+
+
+Filling in the Gaps:
+Write a program that finds all files with a given prefix, such as spam001.txt, spam002.txt, and so on, in a single folder and locates any gaps in the numbering (such as if there is a spam001.txt and spam003.txt but no spam002.txt).
+Have the program rename all the later files to close this gap.
+As an added challenge, write another program that can insert gaps into numbered files so that a new file can be added
+Ans>
+import os, re, shutil
+
+
+# Arguments: folder, prefix
+def fillGap(folder,prefix):
+
+
+    # Create regex with prefix + number + extension.
+    fileRegex = re.compile(r'(%s)((\d)(\d)(\d))\.txt' % prefix)
+
+    # Makee sure the path is absolute.
+    folder = os.path.abspath(folder)
+
+    # When I commented the following one line, the program outptu is
+    # FileNotFoundError: [Errno 2] No such file or directory:   'spam004.txt'
+    os.chdir(folder)  # This line is to avoid the FileNotFoundError.
+
+    # Make a list to contain the file with prefix.
+    fileNames = list()
+    for filename in os.listdir(folder):
+        if re.search(fileRegex, filename):
+            fileNames.append(filename)
+    # Make sure the fileName in the list have a right order.
+
+    fileNames.sort()
+    print(fileNames)
+    # Find the gap through incremting loops
+    for i in range(len(fileNames)):
+        mo = re.search(fileRegex, fileNames[i])
+        if int(mo.group(2)) == i + 1:
+            continue
+        # The group(2) has three digits, so it need to 3 Ifs.
+        # Copy the old file and rename it then delete the old one.
+        if i + 1 < 10:
+            shutil.copy
+            newFileName =prefix + '00' + str(i + 1) + '.txt'
+            shutil.copy(fileNames[i], newFileName)
+            os.unlink(fileNames[i])
+        elif i + 1 < 100:
+            shutil.copy(fileNames[i], prefix + '0' + str(i+1) + '.txt')
+            os.unlink(fileNames[i])
+        else:
+            shutil.copy(fileNames[i], prefix + str(i+1) + '.txt')
+            os.unlink(fileNames[i])
+
+folder = '/home/jianjun/spam/'
+prefix = 'spam'
+
+fillGap(folder, prefix)

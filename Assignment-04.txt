@@ -1,0 +1,21 @@
+Write a program that opens all .txt files in a folder and searches for any line that matches a user-supplied regular expression. The results should be printed to the screen. 
+Ans>
+import re
+
+# user input
+print("\nThis program searches for lines with your string in them\n")
+search_str = input("Please write the string you are searching for: \n")
+print("")
+# file input
+file = open("/Users/Pintu/Downloads/input_file.txt")
+content = file.read()
+file.close()
+
+# create regex
+regex = re.compile(r".*(%s).*" % search_str)
+
+# print out the lines with match
+if regex.search(content) is None:
+    print("No matches was found.")
+else:
+    print(regex.findall(content))
